@@ -1,0 +1,39 @@
+{
+  "required": true,
+  "package": "com.aki.mcutils.mixin",
+  "refmap": "mcutils.refmap.json",
+  "minVersion": "0.7.3",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "com.aki.mcutils.mixin.MixinLoaderFilter",
+  "mixins": [
+    "renderhooks.MixinMinecraft"
+  ],
+  "client": [
+    "MixinGuiOverlayDebug",
+    "command.MixinFixCommandBase",
+    "command.MixinFixFillCommand",
+    "command.MixinFixGiveCommand",
+    "renderhooks.MixinRenderGlobal",
+    "renderhooks.MixinMinecraft",
+    "renderhooks.render.MixinEntityRenderer",
+    "renderhooks.render.MixinWorld",
+    "renderhooks.render.MixinRenderManager",
+    "renderhooks.render.MixinRender",
+    "renderhooks.render.MixinTileEntityRendererDispatcher",
+    "renderhooks.render.MixinClippingHelper",
+    "renderhooks.render.MixinChunk",
+    "renderhooks.render.entities.MixinEntity",
+    "renderhooks.render.tileentities.MixinTileEntity",
+    "renderhooks.render.tileentities.MixinTileEntityBanner",
+    "renderhooks.render.tileentities.MixinTileEntityBeacon",
+    "renderhooks.render.tileentities.MixinTileEntityChest",
+    "renderhooks.render.tileentities.MixinTileEntityEnchantingTable",
+    "renderhooks.render.tileentities.MixinTileEntityEnderChest",
+    "renderhooks.render.tileentities.MixinTileEntityPiston",
+    "renderhooks.render.tileentities.MixinTileEntityShulkerBox",
+    "renderhooks.render.tileentities.MixinTileEntitySign",
+    "renderhooks.render.tileentities.MixinTileEntitySkull",
+    "renderhooks.render.tileentities.MixinTileEntityStructure",
+    "tick.MixinWorld"
+  ]
+}

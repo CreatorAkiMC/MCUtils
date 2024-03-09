@@ -1,0 +1,16 @@
+[
+  {
+    "modid": "MCUtils",
+    "name": "MCUtils",
+    "description": "Supports to various mods",
+    "version": "${version}",
+    "mcversion": "1.12.2",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

@@ -1,0 +1,51 @@
+package com.aki.mcutils.APICore.program.ccr.render;
+
+import com.aki.mcutils.APICore.texture.TextureUtils;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+
+/**
+ * Created by covers1624 on 5/22/2016.
+ */
+public class CCIconRegister implements TextureUtils.IIconRegister {
+
+    public static ArrayList<ResourceLocation> locations = new ArrayList<>();
+
+    static {
+        TextureUtils.addIconRegister(new CCIconRegister());
+    }
+
+    @Override
+    public void registerIcons(TextureMap textureMap) {
+        for (ResourceLocation texture : locations) {
+            textureMap.registerSprite(texture);
+        }
+    }
+
+    public static void registerTexture(String texture) {
+        registerTexture(new ResourceLocation(texture));
+    }
+
+    public static void registerTexture(ResourceLocation location) {
+        locations.add(location);
+    }
+
+    public static void registerBlockTexture(String string) {
+        registerBlockTexture(new ResourceLocation(string));
+    }
+
+    public static void registerBlockTexture(ResourceLocation location) {
+        registerTexture(new ResourceLocation(location.getNamespace(), "blocks/" + location.getPath()));
+    }
+
+    public static void registerItemTexture(String string) {
+        registerItemTexture(new ResourceLocation(string));
+    }
+
+    public static void registerItemTexture(ResourceLocation location) {
+        registerTexture(new ResourceLocation(location.getNamespace(), "items/" + location.getPath()));
+    }
+
+}
