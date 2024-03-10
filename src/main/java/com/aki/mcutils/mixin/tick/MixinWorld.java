@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.BlockPos;
@@ -126,6 +127,9 @@ public abstract class MixinWorld implements IBlockAccess {
     public abstract void tick();
 
     @Shadow @Final public List<EntityPlayer> playerEntities;
+
+    @Shadow public abstract boolean extinguishFire(@Nullable EntityPlayer player, BlockPos pos, EnumFacing side);
+
     @Unique
     public Object2ObjectOpenHashMap<BlockPos, TickBalanceStorage> TickTimeHash = new Object2ObjectOpenHashMap<>();
 
@@ -202,7 +206,7 @@ public abstract class MixinWorld implements IBlockAccess {
         //プレイヤーの処理
         for (int i1 = 0; i1 < this.loadedEntityList.size(); ++i1) {
             Entity entity2 = this.loadedEntityList.get(i1);
-            if(entity2 instanceof EntityPlayer) {
+            if (entity2 instanceof EntityPlayer) {
                 Entity entity3 = entity2.getRidingEntity();
 
                 if (entity3 != null) {
@@ -252,7 +256,7 @@ public abstract class MixinWorld implements IBlockAccess {
 
 
         //この一行でTickの加速減速(物理)を行っている。
-        for(this.EntityTickSum += MCUtils.EntityUpdateTick / MCUtils.BaseTick; this.EntityTickSum >= 1.0D; this.EntityTickSum--) {
+        for (this.EntityTickSum += MCUtils.EntityUpdateTick / MCUtils.BaseTick; this.EntityTickSum >= 1.0D; this.EntityTickSum--) {
             for (int i1 = 0; i1 < this.loadedEntityList.size(); ++i1) {
                 Entity entity2 = this.loadedEntityList.get(i1);
                 if (!(entity2 instanceof EntityPlayer)) {
@@ -327,14 +331,15 @@ public abstract class MixinWorld implements IBlockAccess {
         this.RunCount = 0;
 
         //Tickの加速減速処理
-        for(this.TileTickSum += MCUtils.TileUpdateTick / MCUtils.BaseTick; this.TileTickSum >= 1.0D; this.TileTickSum--) {
+        for (this.TileTickSum += MCUtils.TileUpdateTick / MCUtils.BaseTick; this.TileTickSum >= 1.0D; this.TileTickSum--) {
             Iterator<TileEntity> iterator = this.tickableTileEntities.iterator();
-
             while (iterator.hasNext()) {
                 TileEntity tileentity = iterator.next();
                 BlockPos tilePos = tileentity.getPos();
                 TileEntity tile = this.getTileEntity(tilePos);
                 TickBalanceStorage tickBalance = this.TickTimeHash.get(tilePos);
+                if (tickBalance == null)
+                    this.TickTimeHash.put(tilePos, tickBalance = new TickBalanceStorage());
                 if (tickBalance.getStopTickCycle() == 0) {
                     long nanoTime = System.nanoTime();
                     if (!tileentity.isInvalid() && tileentity.hasWorld() && tile == tileentity && !tile.isInvalid() && tile.hasWorld()) {
@@ -350,8 +355,10 @@ public abstract class MixinWorld implements IBlockAccess {
                                 }
                                 net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackEnd(tileentity);
                                 this.profiler.endSection();
-                            } catch (Throwable throwable) {
-                                CrashReport crashreport2 = CrashReport.makeCrashReport(throwable, "Ticking block entity");
+                            } catch (Exception e) {
+                                System.out.println("ModFix Error");
+                                e.printStackTrace();
+                                CrashReport crashreport2 = CrashReport.makeCrashReport(e, "Ticking block entity");
                                 CrashReportCategory crashreportcategory2 = crashreport2.makeCategory("Block entity being ticked");
                                 tileentity.addInfoToCrashReport(crashreportcategory2);
                                 if (net.minecraftforge.common.ForgeModContainer.removeErroringTileEntities) {
@@ -375,16 +382,16 @@ public abstract class MixinWorld implements IBlockAccess {
                                             System.out.println(message);
                                         }
 
-                                        /*for (EntityPlayer player : this.playerEntities) {
+                                        for (EntityPlayer player : this.playerEntities) {
                                             for (String message : CrashMessages)
                                                 player.sendMessage(new TextComponentString(message));
-                                        }*/
+                                        }
 
                                         ReportedException RE = new ReportedException(crashreport2);
                                         RE.printStackTrace();
 
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
+                                    } catch (Exception e1) {
+                                        e1.printStackTrace();
 
                                         Thread.sleep(100);
                                         throw new ReportedException(crashreport2);
@@ -393,7 +400,6 @@ public abstract class MixinWorld implements IBlockAccess {
                             }
                         }
                     }
-
                     if (tileentity.isInvalid()) {
                         iterator.remove();
                         this.loadedTileEntityList.remove(tileentity);
@@ -401,7 +407,7 @@ public abstract class MixinWorld implements IBlockAccess {
                         if (this.isBlockLoaded(tileentity.getPos())) {
                             //Forge: Bugfix: If we set the tile entity it immediately sets it in the chunk, so we could be desyned
                             Chunk chunk = this.getChunk(tileentity.getPos());
-                            if (chunk.getTileEntity(tileentity.getPos(), net.minecraft.world.chunk.Chunk.EnumCreateEntityType.CHECK) == tileentity)
+                            if (chunk.getTileEntity(tileentity.getPos(), Chunk.EnumCreateEntityType.CHECK) == tileentity)
                                 chunk.removeTileEntity(tileentity.getPos());
                         }
                     }
@@ -416,6 +422,7 @@ public abstract class MixinWorld implements IBlockAccess {
                 this.TickTimeHash.replace(tilePos, tickBalance);
             }
         }
+
 
         //標準の1Tickより、どれだけ遅れているかを算出
         long subtract = this.TimeSum - MCUtilsConfig.OneTickNanoBase;
@@ -432,19 +439,19 @@ public abstract class MixinWorld implements IBlockAccess {
         this.RunCount -= slowlyTickTile.size();
         int MaxLateCycle = 0;
         if (this.RunCount > 0) {
-            long speed = MCUtilsConfig.OneTickNanoBase / (long)this.RunCount;
-            int count = (int) ((double)sum.get() / (double)speed);
+            long speed = MCUtilsConfig.OneTickNanoBase / (long) this.RunCount;
+            int count = (int) ((double) sum.get() / (double) speed);
             for (Map.Entry<BlockPos, TickBalanceStorage> entry : slowlyTickTile.entrySet()) {
                 TickBalanceStorage balanceStorage = entry.getValue();
                 //重いものほどTickを遅らせる(遅延させる)
-                int LateCycle = (int) (((double)balanceStorage.getTime() / (double)sum.get()) * (double)count);
+                int LateCycle = (int) (((double) balanceStorage.getTime() / (double) sum.get()) * (double) count);
                 MaxLateCycle = Math.max(MaxLateCycle, LateCycle);
                 balanceStorage.setStopTickCycle(LateCycle);
                 this.TickTimeHash.replace(entry.getKey(), balanceStorage);
             }
         }
 
-        if(this.ProgressTick % 20 == 0) {
+        if (this.ProgressTick % 20 == 0) {
             InformationCollector.setLateTileEntities(slowlyTickTile.size());
             InformationCollector.setLateTime(subtract);
             InformationCollector.setMaxLateCycle(MaxLateCycle);
@@ -480,7 +487,7 @@ public abstract class MixinWorld implements IBlockAccess {
         this.profiler.endSection();
         this.profiler.endSection();
         this.ProgressTick++;
-        if(this.ProgressTick > Long.MAX_VALUE - 1) {
+        if (this.ProgressTick > Long.MAX_VALUE - 1) {
             this.ProgressTick = 0;
         }
         ci.cancel();
