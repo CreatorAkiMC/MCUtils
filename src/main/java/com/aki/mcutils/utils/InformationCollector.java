@@ -8,6 +8,8 @@ public class InformationCollector {
     private static int LateTileEntities = 0;
     private static int MaxLateCycle = 0;
 
+    private static int PlayerChunkTiles = 0;
+
     public static void setOneTickTime(long time) {
         OneTickTime = time;
     }
@@ -24,6 +26,10 @@ public class InformationCollector {
         MaxLateCycle = maxLateCycle;
     }
 
+    public static void setPlayerChunkTiles(int playerChunkTiles) {
+        PlayerChunkTiles = playerChunkTiles;
+    }
+
     public static long getOneTickTime() {
         return OneTickTime;
     }
@@ -38,5 +44,9 @@ public class InformationCollector {
 
     public static int getMaxLateCycle() {
         return MaxLateCycle;
+    }
+
+    public static int getPlayerChunkTiles() {
+        return PlayerChunkTiles;
     }
 }

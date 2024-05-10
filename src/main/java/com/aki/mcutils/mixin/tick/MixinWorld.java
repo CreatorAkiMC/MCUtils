@@ -7,14 +7,15 @@ import com.aki.mcutils.utils.tick.TickBalanceStorage;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.profiler.Profiler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.BlockPos;
@@ -81,9 +82,6 @@ public abstract class MixinWorld implements IBlockAccess {
     private WorldBorder worldBorder;
 
     @Shadow
-    public abstract boolean tickUpdates(boolean runAllPending);
-
-    @Shadow
     @Nullable
     public abstract TileEntity getTileEntity(BlockPos pos);
 
@@ -99,9 +97,6 @@ public abstract class MixinWorld implements IBlockAccess {
 
     @Shadow
     public abstract World init();
-
-    @Shadow
-    public abstract boolean spawnEntity(Entity entityIn);
 
     @Shadow
     public abstract boolean setBlockToAir(BlockPos pos);
@@ -123,12 +118,9 @@ public abstract class MixinWorld implements IBlockAccess {
     @Shadow
     public abstract void updateComparatorOutputLevel(BlockPos pos, Block blockIn);
 
-    @Shadow
-    public abstract void tick();
-
     @Shadow @Final public List<EntityPlayer> playerEntities;
 
-    @Shadow public abstract boolean extinguishFire(@Nullable EntityPlayer player, BlockPos pos, EnumFacing side);
+    @Shadow @Nullable public abstract MinecraftServer getMinecraftServer();
 
     @Unique
     public Object2ObjectOpenHashMap<BlockPos, TickBalanceStorage> TickTimeHash = new Object2ObjectOpenHashMap<>();
@@ -254,7 +246,6 @@ public abstract class MixinWorld implements IBlockAccess {
             }
         }
 
-
         //この一行でTickの加速減速(物理)を行っている。
         for (this.EntityTickSum += MCUtils.EntityUpdateTick / MCUtils.BaseTick; this.EntityTickSum >= 1.0D; this.EntityTickSum--) {
             for (int i1 = 0; i1 < this.loadedEntityList.size(); ++i1) {
@@ -329,7 +320,6 @@ public abstract class MixinWorld implements IBlockAccess {
 
         this.TimeSum = 0L;
         this.RunCount = 0;
-
         //Tickの加速減速処理
         for (this.TileTickSum += MCUtils.TileUpdateTick / MCUtils.BaseTick; this.TileTickSum >= 1.0D; this.TileTickSum--) {
             Iterator<TileEntity> iterator = this.tickableTileEntities.iterator();
@@ -456,6 +446,13 @@ public abstract class MixinWorld implements IBlockAccess {
             InformationCollector.setLateTime(subtract);
             InformationCollector.setMaxLateCycle(MaxLateCycle);
             InformationCollector.setOneTickTime(this.TimeSum);
+        }
+
+        if(Minecraft.getMinecraft().player != null) {
+            Chunk playerChunk = this.getChunk(Minecraft.getMinecraft().player.getPosition());
+            if (playerChunk != null) {
+                InformationCollector.setPlayerChunkTiles(playerChunk.getTileEntityMap().size());
+            }
         }
 
         slowlyTickTile.clear();

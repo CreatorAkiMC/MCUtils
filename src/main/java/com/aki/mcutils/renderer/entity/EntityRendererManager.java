@@ -7,7 +7,7 @@ import com.aki.mcutils.asm.Optifine;
 import net.minecraft.client.renderer.culling.ICamera;
 
 public class EntityRendererManager {
-    private static EntityRenderer entityRenderer = Optifine.isOptifineDetected() ? new EntityRendererOptifine() : new EntityRenderer();
+    private static final EntityRenderer entityRenderer = Optifine.isOptifineDetected() ? new EntityRendererOptifine() : new EntityRenderer();
 
     public static void setup(ICamera frustum, float partialTicks) {
         if(!MCUtils.isRenderLib)

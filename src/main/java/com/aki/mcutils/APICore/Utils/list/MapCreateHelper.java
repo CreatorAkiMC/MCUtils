@@ -1,4 +1,4 @@
-package com.aki.mcutils.APICore.Utils.render;
+package com.aki.mcutils.APICore.Utils.list;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -16,6 +16,12 @@ public class MapCreateHelper {
     }
 
     public static <K, V> LinkedHashMap<K, V> CreateLinkedHashMap(K[] Keys, IntFunction<V> ValueFunc) {
-        return new LinkedHashMap<>(CreateHashMap(Keys, ValueFunc));
+        LinkedHashMap<K, V> map = new LinkedHashMap<>();
+
+        for(int i = 0; i < Keys.length; i++) {
+            map.put(Keys[i], ValueFunc.apply(i));
+        }
+
+        return map;
     }
 }

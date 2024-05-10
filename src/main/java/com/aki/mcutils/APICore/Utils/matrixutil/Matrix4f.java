@@ -8,7 +8,6 @@ import java.nio.FloatBuffer;
 import sun.misc.Unsafe;
 
 public class Matrix4f {
-
 	public float m00;
 	public float m01;
 	public float m02;

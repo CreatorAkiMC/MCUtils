@@ -16,6 +16,7 @@ public class MCUtilsCommand extends CommandTreeBase {
         super.addSubcommand(new CommandOreDict());
         super.addSubcommand(new CommandTick());
         super.addSubcommand(new CommandTreeHelp(this));
+        super.addSubcommand(new CommandChunk());
     }
 
     @Override

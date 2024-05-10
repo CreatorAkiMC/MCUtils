@@ -33,9 +33,11 @@ public class MixinGuiOverlayDebug {
                 stringList.add("Entity Rendered: " + EntityRendererManager.renderedEntities() + ", Occluded: " + EntityRendererManager.occludedEntities() + ", Schedule: " + EntityRendererManager.totalEntities());
                 stringList.add("TileEntity Rendered: " + TileEntityRendererManager.renderedTileEntities() + ", Occluded: " + TileEntityRendererManager.occludedTileEntities() + ", Schedule: " + TileEntityRendererManager.totalTileEntities());
             }
-            stringList.add("ModFix TileEntity Tick Info (Update every second): ");
+            stringList.add("MCUtils TileEntity Tick Info (Update every second): ");
             stringList.add("  TickBase: " + MCUtilsConfig.OneTickNanoBase + "ns, " + "OneTickTime: " + InformationCollector.getOneTickTime() + ", LateTickTime: " + InformationCollector.getLateTime());
             stringList.add("  LateTileEntities: " + InformationCollector.getLateTileEntities() + ", MaxLateCycle: " + InformationCollector.getMaxLateCycle());
+            stringList.add("Chunk Here");
+            stringList.add("  TileEntities: " + InformationCollector.getPlayerChunkTiles());
 
             GuiDebugHelper.getMinecraftDebugReplaceConsumers().forEach(action -> action.accept(stringList));
             GuiDebugHelper.getStringList().forEach(stringList::addAll);
