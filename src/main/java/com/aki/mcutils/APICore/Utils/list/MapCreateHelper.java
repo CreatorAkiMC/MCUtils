@@ -17,11 +17,9 @@ public class MapCreateHelper {
 
     public static <K, V> LinkedHashMap<K, V> CreateLinkedHashMap(K[] Keys, IntFunction<V> ValueFunc) {
         LinkedHashMap<K, V> map = new LinkedHashMap<>();
-
         for(int i = 0; i < Keys.length; i++) {
             map.put(Keys[i], ValueFunc.apply(i));
         }
-
         return map;
     }
 }

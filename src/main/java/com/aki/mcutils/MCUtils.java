@@ -51,7 +51,8 @@ import java.util.zip.ZipOutputStream;
 @Mod(
         modid = MCUtils.MOD_ID,
         name = MCUtils.MOD_NAME,
-        version = MCUtils.VERSION
+        version = MCUtils.VERSION,
+        guiFactory = "com.aki.mcutils.ConfigGuiFactory"
 )
 public class MCUtils {
 

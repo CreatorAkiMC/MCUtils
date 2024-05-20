@@ -1,18 +1,27 @@
 package com.aki.mcutils.mixin.renderhooks.render.entities;
 
 import com.aki.mcutils.MCUtils;
+import com.aki.mcutils.MCUtilsConfig;
 import com.aki.mcutils.renderer.render_util.IEntityRendererCache;
 import com.aki.mcutils.renderer.render_util.MutableAABB;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import javax.annotation.Nullable;
 
 @Mixin(value = Entity.class, priority = MCUtils.ModPriority)
-public class MixinEntity implements IEntityRendererCache {
+public abstract class MixinEntity implements IEntityRendererCache {
+    @Shadow public abstract AxisAlignedBB getEntityBoundingBox();
+
     @Unique
     private Render<Entity> renderer;
     @Unique
@@ -67,5 +76,26 @@ public class MixinEntity implements IEntityRendererCache {
     @Override
     public MutableAABB getCachedBoundingBox() {
         return this.cachedBoundingBox;
+    }
+
+    /**
+     * @author Aki
+     * @reason Replace isInRangeToRenderDist function
+     */
+    @Overwrite
+    @SideOnly(Side.CLIENT)
+    public boolean isInRangeToRenderDist(double distance)
+    {
+        double d0 = this.getEntityBoundingBox().getAverageEdgeLength();
+
+        if (Double.isNaN(d0))
+        {
+            d0 = 1.0D;
+        }
+        if (MCUtilsConfig.EntityRenderDistDivide > 0)
+            d0 = (d0 * 16.0F * Minecraft.getMinecraft().gameSettings.renderDistanceChunks) / MCUtilsConfig.EntityRenderDistDivide;
+        else
+            d0 = (d0 * 16.0F * Minecraft.getMinecraft().gameSettings.renderDistanceChunks);
+        return distance < d0 * d0;
     }
 }

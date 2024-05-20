@@ -16,6 +16,8 @@ public class MCUtilsConfig {
     public static boolean tileEntityCachedBoundingBoxEnabled = true;
     public static List<ResourceLocation> tileEntityCachedBoundingBoxBlacklistImpl = new ArrayList<>();
 
+    public static float EntityRenderDistDivide = 1.0F;
+
     public static long OneTickNanoBase = 50000000;// -> 50ms (1/20_1Tick)
     //public static boolean show_debug_bounding_box = false;
 
@@ -43,6 +45,7 @@ public class MCUtilsConfig {
             ResourceLocation resourceLocation = tile.contains(":") ? new ResourceLocation(SplitTile[0], SplitTile[1]) : new ResourceLocation(tile);
             tileEntityCachedBoundingBoxBlacklistImpl.add(resourceLocation);
         }
+        EntityRenderDistDivide = cfg.getFloat("Divide_N", category, 1.5F, 1.0F, 1000.0F, "Distance at which the entity will be drawn. dist = [16 * ChunkRenderDist / Divide_N]");
         //show_debug_bounding_box = cfg.getBoolean("Show_Bounding_Box", category, false, "Entity and TileEntity bounding box");
         cfg.save();
     }
