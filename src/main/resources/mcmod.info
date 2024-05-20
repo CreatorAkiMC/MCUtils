@@ -1,6 +1,6 @@
 [
   {
-    "modid": "MCUtils",
+    "modid": "mcutils",
     "name": "MCUtils",
     "description": "This is a prerequisite mod for a mod I'm(Aki) making. Change the minecraft's TE-E rendering engine.",
     "version": "${version}",

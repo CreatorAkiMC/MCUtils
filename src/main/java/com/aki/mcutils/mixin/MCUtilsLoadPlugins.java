@@ -15,7 +15,7 @@ import java.util.Map;
 public class MCUtilsLoadPlugins implements IFMLLoadingPlugin {
     public MCUtilsLoadPlugins() {
         MixinBootstrap.init();
-        Mixins.addConfiguration("mixins." + MCUtils.MOD_NAME + ".json");
+        Mixins.addConfiguration("mixins." + MCUtils.MOD_ID + ".json");
     }
 
     @Override

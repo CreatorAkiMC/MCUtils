@@ -57,7 +57,7 @@ import java.util.zip.ZipOutputStream;
 public class MCUtils {
 
     public static final String MOD_ID = "mcutils";
-    public static final String MOD_NAME = "mcutils";
+    public static final String MOD_NAME = "MCUtils";
     public static final String VERSION = "v3.8-1.12.2";
 
     public static final int ModPriority = 2389;
