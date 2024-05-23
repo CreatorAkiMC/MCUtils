@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL15;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class GlMutableBuffer extends GlBuffer {
     private final int hints;
@@ -24,6 +25,12 @@ public class GlMutableBuffer extends GlBuffer {
 
     @Override
     public void upload(int target, FloatBuffer buf) {
+        GL15.glBufferData(target, buf, this.hints);
+        this.size = buf.capacity();
+    }
+
+    @Override
+    public void upload(int target, IntBuffer buf) {
         GL15.glBufferData(target, buf, this.hints);
         this.size = buf.capacity();
     }

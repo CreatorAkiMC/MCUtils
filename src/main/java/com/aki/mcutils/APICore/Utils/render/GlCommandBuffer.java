@@ -15,15 +15,16 @@ import java.nio.ByteBuffer;
  * 参考
  * */
 public class GlCommandBuffer extends GlObject {
-    private long BaseWriter = 0L;//デフォルト
+    private long BaseWriter;//デフォルト
     private long MainWriter = 0L;
     private int count = 0;//ドローコール数
-    private long capacity = 0L;
+    private final long capacity;
     public ByteBuffer buffer = null;
-    private int bufferIndex = 0;
-    private int stride = 0;
-    private boolean mapped = false;
+    private final int bufferIndex;
+    private final int stride;
+    private boolean mapped;
     private final boolean persistent;
+    private int BaseVertex = 0;
 
     public GlCommandBuffer(long capacity, int flags, int usage, int persistentAccess) {
         this.capacity = capacity;
@@ -102,6 +103,26 @@ public class GlCommandBuffer extends GlObject {
         Un_Safe.putInt(this.MainWriter +  8, first);         // Vertex Start
         Un_Safe.putInt(this.MainWriter + 12, baseInstance);  // Base Instance
 
+        this.MainWriter += this.stride;//main += 16
+    }
+
+    // https://ktstephano.github.io/rendering/opengl/mdi
+    public void addElementsIndirectDrawCall(int first, int count, int baseVertex, int baseInstance, int instanceCount) {
+        if (this.count++ >= this.capacity) {
+            throw new BufferUnderflowException();
+        }
+
+        Unsafe Un_Safe = UnsafeUtil.UNSAFE;
+
+        Un_Safe.putInt(this.MainWriter     , count);         // Vertex Count
+        Un_Safe.putInt(this.MainWriter +  4, instanceCount); // Instance Count
+        Un_Safe.putInt(this.MainWriter +  8, first);         // Vertex Start
+        //何番目から始めるか？ オフセットみたいなもの
+        //基本的に 1Chunk の 頂点数を入れればいいと思う。
+        Un_Safe.putInt(this.MainWriter +  12, this.BaseVertex);         // Base Vertex
+        Un_Safe.putInt(this.MainWriter + 16, baseInstance);  // Base Instance
+
+        this.BaseVertex += baseVertex;
         this.MainWriter += this.stride;//main += 16
     }
 

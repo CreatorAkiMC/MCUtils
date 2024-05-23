@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL31;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public abstract class GlBuffer extends GlObject {
     protected int size;
@@ -25,6 +26,8 @@ public abstract class GlBuffer extends GlObject {
     public abstract void upload(int target, ByteBuffer buf);
 
     public abstract void upload(int target, FloatBuffer buf);
+
+    public abstract void upload(int target, IntBuffer buf);
 
     public abstract void allocate(int target, int size);
 
