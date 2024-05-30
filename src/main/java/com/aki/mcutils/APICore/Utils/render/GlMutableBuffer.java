@@ -51,13 +51,11 @@ public class GlMutableBuffer extends GlBuffer {
         this.size = buf.capacity();
     }
 
-    /**
-     * 必ず前後に、bind(int target)、unbind() を挟んでください。
-     * */
     @Override
     public void bufferSubData(long offset, ByteBuffer buf) {
         int new_size = this.size + (buf.limit() - this.size + (int)offset);
         this.setHandle(GLHelper.growBuffer(this.handle(), this.size, new_size));
+        this.bind(this.target);
         GL15.glBufferSubData(this.target, offset, buf);
         this.size = Math.max(this.size, new_size);
     }
@@ -66,6 +64,7 @@ public class GlMutableBuffer extends GlBuffer {
     public void bufferSubData(long offset, FloatBuffer buf) {
         int new_size = this.size + (buf.limit() - this.size + (int)offset);
         this.setHandle(GLHelper.growBuffer(this.handle(), this.size, new_size));
+        this.bind(this.target);
         GL15.glBufferSubData(this.target, offset, buf);
         this.size = Math.max(this.size, new_size);
     }
@@ -74,6 +73,7 @@ public class GlMutableBuffer extends GlBuffer {
     public void bufferSubData(long offset, IntBuffer buf) {
         int new_size = this.size + (buf.limit() - this.size + (int)offset);
         this.setHandle(GLHelper.growBuffer(this.handle(), this.size, new_size));
+        this.bind(this.target);
         GL15.glBufferSubData(this.target, offset, buf);
         this.size = Math.max(this.size, new_size);
     }
@@ -82,6 +82,7 @@ public class GlMutableBuffer extends GlBuffer {
     public void bufferSubData(long offset, DoubleBuffer buf) {
         int new_size = this.size + (buf.limit() - this.size + (int)offset);
         this.setHandle(GLHelper.growBuffer(this.handle(), this.size, new_size));
+        this.bind(this.target);
         GL15.glBufferSubData(this.target, offset, buf);
         this.size = Math.max(this.size, new_size);
     }
@@ -90,6 +91,7 @@ public class GlMutableBuffer extends GlBuffer {
     public void bufferSubData(long offset, ShortBuffer buf) {
         int new_size = this.size + (buf.limit() - this.size + (int)offset);
         this.setHandle(GLHelper.growBuffer(this.handle(), this.size, new_size));
+        this.bind(this.target);
         GL15.glBufferSubData(this.target, offset, buf);
         this.size = Math.max(this.size, new_size);
     }
