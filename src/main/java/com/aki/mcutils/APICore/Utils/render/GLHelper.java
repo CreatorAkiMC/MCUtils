@@ -7,6 +7,15 @@ import org.lwjgl.opengl.GL45;
 import java.nio.ByteBuffer;
 
 public class GLHelper {
+
+    /**
+     * 戻り値で必ず vbo の id を更新してください。
+     * 正しい値が反映されません。
+     * 
+     * 例 :
+     *  int vbo_id = xxx;
+     *  vbo_id = GLHelper.growBuffer(vbo_id, vbo_oldSize, newSize); //ただし、このままでもいいですが、何か更新を挟むことをお勧めします。
+     * */
     public static int growBuffer(int vbo, long oldSize, long newSize) {
         if (GLUtils.CAPS.OpenGL45) {
             int newVbo = GL45.glCreateBuffers();

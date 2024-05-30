@@ -69,6 +69,7 @@ public class GlCommandBuffer extends GlObject {
     public void begin() {
         this.count = 0;
         this.MainWriter = this.BaseWriter;
+        this.BaseVertex = 0;
 
         /**
          * GL44をサポートしているので使わない
@@ -119,6 +120,9 @@ public class GlCommandBuffer extends GlObject {
         Un_Safe.putInt(this.MainWriter +  8, first);         // Vertex Start
         //何番目から始めるか？ オフセットみたいなもの
         //基本的に 1Chunk の 頂点数を入れればいいと思う。
+        /**
+         * this.BaseVertex を廃止して、baseVertexをそのまま代入したほうがいいかもしれません。
+         * */
         Un_Safe.putInt(this.MainWriter +  12, this.BaseVertex);         // Base Vertex
         Un_Safe.putInt(this.MainWriter + 16, baseInstance);  // Base Instance
 
@@ -135,6 +139,7 @@ public class GlCommandBuffer extends GlObject {
             this.buffer = GLUtils.map(this.bufferIndex, this.capacity, rangeAccess, access, this.buffer);//nullになっている
             this.BaseWriter = MemoryUtil.getAddress(this.buffer);
             this.MainWriter = this.BaseWriter;
+            this.BaseVertex = 0;
             mapped = true;
         }
     }
@@ -155,6 +160,7 @@ public class GlCommandBuffer extends GlObject {
             this.buffer = null;
             this.BaseWriter = 0L;
             this.MainWriter = 0L;
+            this.BaseVertex = 0;
         }
     }
 

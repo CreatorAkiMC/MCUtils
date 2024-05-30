@@ -1,35 +1,54 @@
 package com.aki.mcutils.APICore.Utils.render;
 
+import com.aki.mcutils.APICore.Utils.list.Pair;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL31;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.nio.*;
 
 public abstract class GlBuffer extends GlObject {
     protected int size;
+    protected int target = -1;
 
     protected GlBuffer() {
         //バッファ生成
         this.setHandle(GL15.glGenBuffers());
     }
 
-    public void unbind(int target) {
-        GL15.glBindBuffer(target, 0);
+    public int getTarget() {
+        return this.target;
+    }
+
+    public void unbind() {
+        GL15.glBindBuffer(this.target, 0);
+        this.target = -1;
     }
 
     public void bind(int target) {
         GL15.glBindBuffer(target, this.handle());
+        this.target = target;
     }
 
-    public abstract void upload(int target, ByteBuffer buf);
+    public abstract void upload(long data_size);
 
-    public abstract void upload(int target, FloatBuffer buf);
+    public abstract void upload(ByteBuffer buf);
 
-    public abstract void upload(int target, IntBuffer buf);
+    public abstract void upload(FloatBuffer buf);
 
-    public abstract void allocate(int target, int size);
+    public abstract void upload(IntBuffer buf);
+    public abstract void upload(DoubleBuffer buf);
+    public abstract void upload(ShortBuffer buf);
+
+    //bufferSubData...
+    public abstract void bufferSubData(int offset, ByteBuffer buf);
+
+    public abstract void bufferSubData(int offset, FloatBuffer buf);
+
+    public abstract void bufferSubData(int offset, IntBuffer buf);
+    public abstract void bufferSubData(int offset, DoubleBuffer buf);
+    public abstract void bufferSubData(int offset, ShortBuffer buf);
+
+    public abstract void allocate(int size);
 
     /*
     public void upload(int target, VertexData data) {
@@ -47,15 +66,31 @@ public abstract class GlBuffer extends GlObject {
         src.bind(GL31.GL_COPY_READ_BUFFER);
 
         dst.bind(GL31.GL_COPY_WRITE_BUFFER);
-        dst.allocate(GL31.GL_COPY_WRITE_BUFFER, bufferSize);
+        dst.allocate(bufferSize);
 
         GL31.glCopyBufferSubData(GL31.GL_COPY_READ_BUFFER, GL31.GL_COPY_WRITE_BUFFER, readOffset, writeOffset, copyLen);
 
-        dst.unbind(GL31.GL_COPY_WRITE_BUFFER);
-        src.unbind(GL31.GL_COPY_READ_BUFFER);
+        dst.unbind();
+        src.unbind();
     }
 
     public int getSize() {
         return this.size;
+    }
+
+    public Pair<Integer, Integer> fixSize() {
+        int old_size = this.size;
+        this.size = GL15.glGetBufferParameteri(this.target, GL15.GL_BUFFER_SIZE);
+        return new Pair<>(old_size, this.size);
+    }
+
+    @Deprecated
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    @Override
+    public void setHandle(int new_handle) {
+        super.setHandle(new_handle);
     }
 }

@@ -5,7 +5,7 @@ public class GlObject {
 
     private int handle = INVALID_HANDLE;
 
-    protected final void setHandle(int handle) {
+    protected void setHandle(int handle) {
         this.handle = handle;
     }
 
