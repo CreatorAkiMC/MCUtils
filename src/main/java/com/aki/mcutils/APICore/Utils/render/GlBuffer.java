@@ -40,13 +40,13 @@ public abstract class GlBuffer extends GlObject {
     public abstract void upload(ShortBuffer buf);
 
     //bufferSubData...
-    public abstract void bufferSubData(int offset, ByteBuffer buf);
+    public abstract void bufferSubData(long offset, ByteBuffer buf);
 
-    public abstract void bufferSubData(int offset, FloatBuffer buf);
+    public abstract void bufferSubData(long offset, FloatBuffer buf);
 
-    public abstract void bufferSubData(int offset, IntBuffer buf);
-    public abstract void bufferSubData(int offset, DoubleBuffer buf);
-    public abstract void bufferSubData(int offset, ShortBuffer buf);
+    public abstract void bufferSubData(long offset, IntBuffer buf);
+    public abstract void bufferSubData(long offset, DoubleBuffer buf);
+    public abstract void bufferSubData(long offset, ShortBuffer buf);
 
     public abstract void allocate(int size);
 
