@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 public class Optifine {
 
     private static final ReflectionMethod<Boolean> IS_SHADERS = new ReflectionMethod<>("Config", "isShaders", "isShaders");
+    private static final ReflectionMethod<Boolean> IS_NATURALTEXTURES = new ReflectionMethod<>("Config", "isNaturalTextures", "isNaturalTextures");
     private static final ReflectionField<Boolean> IS_SHADOW_PASS = new ReflectionField<>("net.optifine.shaders.Shaders", "isShadowPass", "isShadowPass");
     private static final ReflectionMethod<Void> NEXT_ENTITY = new ReflectionMethod<>("net.optifine.shaders.Shaders", "nextEntity", "nextEntity", Entity.class);
     private static final ReflectionField<Entity> RENDERED_ENTITY = new ReflectionField<>(RenderGlobal.class, "renderedEntity", "renderedEntity");
@@ -25,6 +26,10 @@ public class Optifine {
 
     public static boolean isShaders() {
         return IS_SHADERS.invoke(null);
+    }
+
+    public static boolean isNaturalTextures() {
+        return IS_NATURALTEXTURES.invoke(null);
     }
 
     public static boolean isShadowPass() {
