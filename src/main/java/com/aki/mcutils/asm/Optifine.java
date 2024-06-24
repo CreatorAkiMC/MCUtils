@@ -4,8 +4,10 @@ import com.aki.mcutils.APICore.Utils.reflectors.ReflectionField;
 import com.aki.mcutils.APICore.Utils.reflectors.ReflectionMethod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 
 public class Optifine {
 
@@ -13,6 +15,7 @@ public class Optifine {
     private static final ReflectionMethod<Boolean> IS_NATURALTEXTURES = new ReflectionMethod<>("Config", "isNaturalTextures", "isNaturalTextures");
     private static final ReflectionField<Boolean> IS_SHADOW_PASS = new ReflectionField<>("net.optifine.shaders.Shaders", "isShadowPass", "isShadowPass");
     private static final ReflectionMethod<Void> NEXT_ENTITY = new ReflectionMethod<>("net.optifine.shaders.Shaders", "nextEntity", "nextEntity", Entity.class);
+    private static final ReflectionMethod<BakedQuad> GetNaturalTexture = new ReflectionMethod<>("net.optifine.NaturalTextures", "getNaturalTexture", "getNaturalTexture", BlockPos.class, BakedQuad.class);
     private static final ReflectionField<Entity> RENDERED_ENTITY = new ReflectionField<>(RenderGlobal.class, "renderedEntity", "renderedEntity");
     private static final ReflectionMethod<Boolean> IS_FAST_RENDER = new ReflectionMethod<>("Config", "isFastRender", "isFastRender");
     private static final ReflectionMethod<Boolean> IS_ANTIALIASING = new ReflectionMethod<>("Config", "isAntialiasing", "isAntialiasing");
@@ -38,6 +41,10 @@ public class Optifine {
 
     public static void nextEntity(Entity entity) {
         NEXT_ENTITY.invoke(null, entity);
+    }
+
+    public static BakedQuad getNaturalTexture(BlockPos pos, BakedQuad quad) {
+        return GetNaturalTexture.invoke(null, pos, quad);
     }
 
     public static void setRenderedEntity(Entity entity) {
