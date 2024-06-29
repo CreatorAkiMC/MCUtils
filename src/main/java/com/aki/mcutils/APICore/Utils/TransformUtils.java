@@ -15,7 +15,6 @@ import net.minecraftforge.client.model.ForgeBlockStateV1.TRSRDeserializer;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.ModContainer;
-import org.apache.logging.log4j.Level;
 
 import javax.vecmath.Vector3f;
 import java.util.EnumMap;

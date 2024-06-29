@@ -411,7 +411,6 @@ public class Matrix4 extends Transformation implements Copyable<Matrix4> {
     }
 
     public Matrix4 set(Matrix4f mat) {
-
         m00 = mat.m00;
         m01 = mat.m01;
         m02 = mat.m02;
