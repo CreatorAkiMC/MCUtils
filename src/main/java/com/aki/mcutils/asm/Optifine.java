@@ -28,8 +28,9 @@ public class Optifine {
     private static final ReflectionMethod<BakedQuad> GetNaturalTexture = new ReflectionMethod<>("net.optifine.NaturalTextures", "getNaturalTexture", "getNaturalTexture", BlockPos.class, BakedQuad.class);
     private static final ReflectionMethod<Boolean> IsBreakingAnimation = new ReflectionMethod<>("net.optifine.render.RenderEnv", "isBreakingAnimation", "isBreakingAnimation", BakedQuad.class);
     private static final ReflectionMethod<BakedQuad[]> GetArrayQuadsCtm = new ReflectionMethod<>("net.optifine.render.RenderEnv", "getArrayQuadsCtm", "getArrayQuadsCtm", BakedQuad.class);
-    private static final ReflectionMethod<RenderEnv> GetRenderEnv = new ReflectionMethod<>("net.minecraft.client.renderer.BufferBuilder", "getRenderEnv", "getRenderEnv", IBlockAccess.class, IBlockState.class, BlockPos.class);
+    private static final ReflectionConstructor<RenderEnv> GetRenderEnv = new ReflectionConstructor<>("net.optifine.render.RenderEnv", IBlockState.class, BlockPos.class);
     private static final ReflectionMethod<List<BakedQuad>> GetNaturalBakedArray = new ReflectionMethod<>("net.optifine.model.BlockModelCustomizer", "getRenderQuads", "getRenderQuads", List.class, IBlockAccess.class, IBlockState.class, BlockPos.class, EnumFacing.class, long.class, RenderEnv.class);
+
     private static final ReflectionMethod<IBakedModel> GetBakedModel = new ReflectionMethod<>("net.optifine.model.BlockModelCustomizer", "getRenderModel", "getRenderModel", IBakedModel.class, IBlockState.class, RenderEnv.class);
     private static final ReflectionMethod<BakedQuad[]> GetConnectedTexture = new ReflectionMethod<>("net.optifine.ConnectedTextures", "getConnectedTexture", "getConnectedTexture", IBlockAccess.class, IBlockState.class, BlockPos.class, BakedQuad.class, RenderEnv.class);
     private static final ReflectionField<Entity> RENDERED_ENTITY = new ReflectionField<>(RenderGlobal.class, "renderedEntity", "renderedEntity");
@@ -77,8 +78,8 @@ public class Optifine {
         return GetConnectedTexture.invoke(null, access, state, pos, quad, renderEnv);
     }
 
-    public static RenderEnv getRenderEnv(IBlockAccess world, IBlockState state, BlockPos pos) {
-        return GetRenderEnv.invoke(null, world, state, pos);
+    public static RenderEnv getRenderEnv(IBlockState state, BlockPos pos) {
+        return GetRenderEnv.newInstance(state, pos);
     }
 
     public static List<BakedQuad> getNaturalBakedArray(List<BakedQuad> quads, IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing facing, long rand, RenderEnv env) {
